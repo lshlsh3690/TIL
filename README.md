@@ -9,7 +9,7 @@
 
 ## ClaudeCode (2)
 
-- [<Skill 제목>](ClaudeCode/Agent_skill.md)
+- [Claude Code Skill](ClaudeCode/Agent_skill.md)
 - [필수 명령어](ClaudeCode/필수명령어.md)
 
 ## Java (1)
