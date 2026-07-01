@@ -1,14 +1,20 @@
+# Claude Code Skill
+
 skill은 클로드가 대화의 맥락을 분석해서 스스로 필요하다고 판단하면 참조하거나 @멘션으로 즉시 로딩한다.
 
-SKILL.md의 파일 구조
+## SKILL.md의 파일 구조
+
 SKILL.md 파일은 상단의 메타데이터 블록과 그 아래의 본문 지침으로 구성된다.
 
-메타데이터 블록은 ---으로 감싼 YAML 형식이며 세 가지 핵심 필드를 포함한다.
-- name :  소문자와 하이픈으로 작성하며, /name 형태의 슬래시 커맨드로 호출되는 식별자다.
-- description : 이 Skill이 무엇을 하고 언제 사용하는지를 명확히 기술한다. 클로드가 자동 활성화 여부를 판단할 때 이 필드를 참조하므로, 구체적으로 작성할수록 정확하게 호출된다.
-- allowed-tools : Skill이 사용할 수 있는 도구를 선언한다. 파일 읽기 쓰거나 Bash 명령이 필요하다면 반드시 명시해야한다. 본문지침은 클로드가 실제로 따르는 지침으로, 무엇을 하는가와 언제 사용하는가를 명확히 포함해야 한다.
+메타데이터 블록은 `---`으로 감싼 YAML 형식이며 세 가지 핵심 필드를 포함한다.
 
+| 필드 | 설명 |
+| --- | --- |
+| `name` | 소문자와 하이픈으로 작성하며, `/name` 형태의 슬래시 커맨드로 호출되는 식별자다. |
+| `description` | 이 Skill이 무엇을 하고 언제 사용하는지를 명확히 기술한다. 클로드가 자동 활성화 여부를 판단할 때 이 필드를 참조하므로, 구체적으로 작성할수록 정확하게 호출된다. |
+| `allowed-tools` | Skill이 사용할 수 있는 도구를 선언한다. 파일 읽기 쓰거나 Bash 명령이 필요하다면 반드시 명시해야한다. |
 
+본문지침은 클로드가 실제로 따르는 지침으로, 무엇을 하는가와 언제 사용하는가를 명확히 포함해야 한다.
 
 ## SKILL.md 형식
 
@@ -81,3 +87,24 @@ claude: (commit-message 스킬이 description을 보고 자동 활성화됨)
 
 이처럼 사용자가 명시적으로 `/commit-message`를 호출하지 않아도, 대화 맥락("커밋 메시지 만들어줘")이 SKILL.md의 `description`과 일치하면 클로드가 스스로 해당 스킬을 찾아 로딩하고 지침을 따른다.
 
+## 클로드 코드 스킬 저장소
+
+클로드 코드 Skill을 필요할 때마다 일일이 다 만들어서 쓰기는 부담스럽기 때문에 아래 저장소에서 가져다 쓰면 된다고 한다.
+
+| 제공자 | 링크 |
+| --- | --- |
+| 앤트로픽이 운영하는 스킬 저장소 | [github.com/anthropics/skills](https://github.com/anthropics/skills) |
+| Vercel | [skills.sh](https://skills.sh) |
+| Composio | [github.com/ComposioHQ/awesome-claude-skills](https://github.com/ComposioHQ/awesome-claude-skills) |
+| SkillsMP | [skillsmp.com](https://skillsmp.com) |
+
+## 스킬 활성화 방법
+
+- **자동 활성화**: 위의 클로드 스킬 예제처럼 커밋 메세지를 요청할때 Skill을 자동으로 로드한다.
+- **수동 활성화**: `/skill-name`과 같이 슬래시 명령어로 활성화한다.
+
+## 스킬 비활성화 방법
+
+1. `mv SKILL.md SKILL.md.disabled`와 같이 뒤에 disabled를 추가한다.
+2. skills 폴더 바깥으로 이동한다.
+3. 스킬을 삭제한다.
