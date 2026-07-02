@@ -3,6 +3,7 @@ TIL 레포 폴더 구조를 스캔해서 README.md에 카테고리별 목차를 
 GitHub Actions에서 push마다 실행됨.
 """
 import os
+from urllib.parse import quote
 
 # 스캔에서 제외할 폴더/파일
 EXCLUDE_DIRS = {".git", ".github", "__pycache__", "node_modules"}
@@ -69,8 +70,8 @@ def build_readme(categories):
         files = categories[category]
         lines.append(f"\n## {category} ({len(files)})\n")
         for title, rel_path in files:
-            # 윈도우 경로 구분자 대응
-            url_path = rel_path.replace(os.sep, "/")
+            # 윈도우 경로 구분자 대응 + 공백 등 특수문자 URL 인코딩 (마크다운 링크 깨짐 방지)
+            url_path = quote(rel_path.replace(os.sep, "/"), safe="/")
             lines.append(f"- [{title}]({url_path})")
 
     lines.append("\n---\n*이 README는 GitHub Actions로 자동 생성됩니다.*")
