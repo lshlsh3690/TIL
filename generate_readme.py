@@ -3,6 +3,7 @@ TIL 레포 폴더 구조를 스캔해서 README.md에 카테고리별 목차를 
 GitHub Actions에서 push마다 실행됨.
 """
 import os
+import subprocess
 from urllib.parse import quote
 
 # 스캔에서 제외할 폴더/파일
@@ -34,6 +35,18 @@ def get_title(filepath):
     return os.path.splitext(os.path.basename(filepath))[0]
 
 
+def get_last_modified_date(filepath):
+    """git 커밋 히스토리에서 파일의 최종 수정일을 조회, 히스토리가 없으면 None"""
+    try:
+        result = subprocess.run(
+            ["git", "log", "-1", "--format=%cd", "--date=format:%Y-%m-%d", "--", filepath],
+            capture_output=True, text=True, check=True,
+        )
+        return result.stdout.strip() or None
+    except Exception:
+        return None
+
+
 def scan_categories(root):
     """1depth 폴더를 카테고리로 취급하고, 각 폴더 안의 .md 파일을 수집"""
     categories = {}
@@ -52,8 +65,10 @@ def scan_categories(root):
                         rel_path = os.path.relpath(
                             os.path.join(dirpath, fname), root
                         )
-                        title = get_title(os.path.join(dirpath, fname))
-                        md_files.append((title, rel_path))
+                        full_file_path = os.path.join(dirpath, fname)
+                        title = get_title(full_file_path)
+                        date = get_last_modified_date(full_file_path)
+                        md_files.append((title, rel_path, date))
             if md_files:
                 categories[entry] = md_files
 
@@ -69,10 +84,11 @@ def build_readme(categories):
     for category in sorted(categories.keys()):
         files = categories[category]
         lines.append(f"\n## {category} ({len(files)})\n")
-        for title, rel_path in files:
+        for title, rel_path, date in files:
             # 윈도우 경로 구분자 대응 + 공백 등 특수문자 URL 인코딩 (마크다운 링크 깨짐 방지)
             url_path = quote(rel_path.replace(os.sep, "/"), safe="/")
-            lines.append(f"- [{title}]({url_path})")
+            date_str = f" — 최종 수정: {date}" if date else ""
+            lines.append(f"- [{title}]({url_path}){date_str}")
 
     lines.append("\n---\n*이 README는 GitHub Actions로 자동 생성됩니다.*")
     return "\n".join(lines)

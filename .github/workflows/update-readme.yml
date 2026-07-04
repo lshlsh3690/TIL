@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: 저장소 체크아웃
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 파일별 최종 수정일 조회를 위해 전체 히스토리 필요
 
       - name: Python 설치
         uses: actions/setup-python@v5
